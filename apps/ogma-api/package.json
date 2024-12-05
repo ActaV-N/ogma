@@ -1,0 +1,26 @@
+{
+  "name": "@ogma/api",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "yarn@4.5.3",
+  "dependencies": {
+    "@fastify/multipart": "^9.0.1",
+    "confidence": "^5.0.1",
+    "dotenv": "^16.4.5",
+    "fastify": "^5.1.0",
+    "fastify-plugin": "^5.0.1",
+    "pino-pretty": "^12.1.0",
+    "reflect-metadata": "^0.2.2",
+    "typedi": "^0.10.0"
+  },
+  "scripts": {
+    "start:dev": "tsx watch --env-file ./.env ./src/server.ts"
+  },
+  "devDependencies": {
+    "@types/confidence": "^1.4.34",
+    "tsx": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

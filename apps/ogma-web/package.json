@@ -1,0 +1,26 @@
+{
+  "name": "@ogma/web",
+  "packageManager": "yarn@4.5.3",
+  "type": "module",
+  "dependencies": {
+    "@auth/core": "^0.37.4",
+    "@remix-run/node": "^2.15.0",
+    "@remix-run/react": "^2.15.0",
+    "@remix-run/serve": "^2.15.0",
+    "isbot": "4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.15.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "vite": "^6.0.2"
+  },
+  "scripts": {
+    "dev": "remix vite:dev"
+  }
+}

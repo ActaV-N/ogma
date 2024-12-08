@@ -1,0 +1,27 @@
+FROM node:20-slim
+
+WORKDIR /app
+
+# Install yarn
+RUN corepack enable && corepack prepare yarn@4.5.3 --activate
+
+# Copy workspace configuration
+COPY package.json yarn.lock .yarnrc.yml tsconfig.json tsconfig.base.json ./
+COPY .yarn ./.yarn
+COPY apps/ogma-api/package.json ./apps/ogma-api/
+
+# Install dependencies
+RUN yarn install
+
+# Copy source code
+COPY apps/ogma-api ./apps/ogma-api
+
+# Build TypeScript code
+WORKDIR /app/apps/ogma-api
+RUN yarn workspace @ogma/api build
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Start the application
+CMD ["yarn", "workspace", "@ogma/api", "start:dev"] 

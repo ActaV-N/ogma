@@ -10,6 +10,23 @@ const doc = {
     production: true,
     $default: false,
   },
+  db: {
+    host: {
+      $env: 'DB_HOST',
+    },
+    port: {
+      $env: 'DB_PORT',
+    },
+    username: {
+      $env: 'DB_USERNAME',
+    },
+    password: {
+      $env: 'DB_PASSWORD',
+    },
+    database: {
+      $env: 'DB_DATABASE',
+    },
+  }
 };
 
 const store = new Store(doc);

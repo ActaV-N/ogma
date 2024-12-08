@@ -1,36 +1,54 @@
-import 'reflect-metadata';
-import fastify from 'fastify';
-import { fastifyMultipart } from '@fastify/multipart';
-import { getConfig } from '~configs';
-import { appRoutes } from '~routes';
-import { routeEnroller } from '~plugins';
+import "reflect-metadata";
+import fastify from "fastify";
+import { fastifyMultipart } from "@fastify/multipart";
+import fastifyWebsocket from "@fastify/websocket";
+import { getConfig } from "~configs";
+import { appRoutes } from "~routes";
+import { routeEnroller } from "~plugins";
+import { contextSetter } from "~hooks";
+import { DataSource } from "typeorm";
+import { ormConfig } from "~configs/ormconfig";
+import entities from "~services/entities";
 
 (async () => {
-  const port = getConfig('/port');
-  const isProduction = getConfig('/isProduction');
+  const port = getConfig("/port");
+  const isProduction = getConfig("/isProduction");
+
+  try {
+    const dataSource = new DataSource({ ...ormConfig, entities });
+    await dataSource.initialize();
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+
   const server = fastify({
     logger: {
-      level: isProduction ? 'info' : 'debug',
+      level: isProduction ? "info" : "debug",
       transport: {
-        target: 'pino-pretty',
+        target: "pino-pretty",
         options: {
-          translateTime: 'HH:MM:ss Z',
-          ignore: 'pid,hostname',
+          translateTime: "HH:MM:ss Z",
+          ignore: "pid,hostname",
         },
       },
     },
   });
 
-  server.get('/ping', async () => {
-    return 'pong\n';
+  server.get("/ping", async () => {
+    return "pong\n";
   });
+
+  // hooks
+  server.addHook("onRequest", contextSetter);
 
   // Plugins from fastify ecosystem
   await server.register(fastifyMultipart);
+  await server.register(fastifyWebsocket);
   // Custom plugins
   await server.register(routeEnroller);
 
-  await server.register(appRoutes, { prefix: '/api' });
+  await server.register(appRoutes, { prefix: "/api" });
 
   server.listen({ port }, (err, address) => {
     if (err) {

@@ -5,14 +5,8 @@ services:
       dockerfile: Dockerfile.oa
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - PORT=3000
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_USERNAME=root
-      - DB_PASSWORD=1234
-      - DB_DATABASE=ogma
+    env_file:
+      - ./apps/ogma-api/.env
     volumes:
       - ./apps/ogma-api:/app/apps/ogma-api
     depends_on:

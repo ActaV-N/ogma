@@ -39,6 +39,6 @@ export default {
     });
 
     // 4. response
-    return reply.status(201).send(conversation.id);
+    return reply.status(201).send(conversation);
   },
 } satisfies RouterSpec;

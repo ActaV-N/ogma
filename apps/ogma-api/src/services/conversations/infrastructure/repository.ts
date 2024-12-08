@@ -9,4 +9,10 @@ export class ConversationRepository extends Repository<Conversation> {
   async find() {
     return this.entityManager.find(this.entityClass);
   }
+
+  async findOneOrFail(id: string) {
+    return this.entityManager.findOneOrFail(Conversation, {
+      where: { id },
+    });
+  }
 }

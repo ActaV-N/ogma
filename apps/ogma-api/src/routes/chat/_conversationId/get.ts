@@ -5,9 +5,14 @@ export default {
   method: "get",
   opts: { websocket: true },
   handler: async (socket, request) => {
-    const conversationService = request.context.get(ConversationService);
-    conversationService.register();
+    // 0. ctx destructuring
+    const { context } = request;
+
+    // 1. fetch service
+    // 2. define parameter
     const { conversationId } = request.params as { conversationId: string };
+    // 3. call service method
+    // 4. response
 
     socket.on("message", (message: string) => {
       try {

@@ -1,9 +1,12 @@
 import { Service } from "typedi";
-import { Repository } from "~libs/ddd";
+import { Repository } from "~libs/ddd/typeorm";
+import { Conversation } from "../domain/model";
 
 @Service()
-export class ConversationRepository extends Repository {
-    test() {
-        console.log('test');
-    }
+export class ConversationRepository extends Repository<Conversation> {
+  protected entityClass = Conversation;
+
+  async find() {
+    return this.entityManager.find(this.entityClass);
+  }
 }

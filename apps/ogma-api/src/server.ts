@@ -9,6 +9,8 @@ import { contextSetter } from "~hooks";
 import { DataSource } from "typeorm";
 import { ormConfig } from "~configs/ormconfig";
 import entities from "~services/entities";
+import Container from "typedi";
+import { dataSourceToken } from "~libs/ddd/typeorm";
 
 (async () => {
   const port = getConfig("/port");
@@ -17,6 +19,12 @@ import entities from "~services/entities";
   try {
     const dataSource = new DataSource({ ...ormConfig, entities });
     await dataSource.initialize();
+
+    Container.set({
+      id: dataSourceToken,
+      value: dataSource,
+      global: true,
+    });
   } catch (error) {
     console.error(error);
     process.exit(1);
@@ -50,7 +58,7 @@ import entities from "~services/entities";
 
   await server.register(appRoutes, { prefix: "/api" });
 
-  server.listen({ port }, (err, address) => {
+  server.listen({ host: "0.0.0.0", port }, (err, address) => {
     if (err) {
       server.log.error(err);
       process.exit(1);

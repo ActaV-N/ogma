@@ -42,6 +42,15 @@ export class Conversation extends Aggregate {
     }
   }
 
+  toListItem() {
+    return {
+      id: this.id,
+      title: this.title,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  }
+
   userAsk(message: string) {
     this.messages.push(new Message({ role: "user", content: message }));
   }

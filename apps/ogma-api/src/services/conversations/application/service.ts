@@ -13,6 +13,14 @@ export class ConversationService extends ApplicationService {
     super();
   }
 
+  async list() {
+    return this.conversationRepository
+      .find()
+      .then((conversations) =>
+        conversations.map((conversation) => conversation.toListItem())
+      );
+  }
+
   async create(args: { title: string; modelType: Conversation["modelType"] }) {
     const conversation = new Conversation(args);
 

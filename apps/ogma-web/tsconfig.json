@@ -6,6 +6,8 @@
     "paths": {
       "~*": ["./app/*"]
     },
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   }
 }

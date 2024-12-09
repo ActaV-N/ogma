@@ -1,4 +1,19 @@
 services:
+
+  ow:
+    build:
+      context: .
+      dockerfile: Dockerfile.ow
+    ports:
+      - "3001:5173"
+    environment:
+      - OGMA_API_URL=http://oa:3000
+    volumes:
+      - ./apps/ogma-web:/app/apps/ogma-web
+    depends_on:
+      - oa
+    restart: unless-stopped
+
   oa:
     build:
       context: .

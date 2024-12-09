@@ -16,10 +16,6 @@ RUN yarn install
 # Copy source code
 COPY apps/ogma-api ./apps/ogma-api
 
-# Build TypeScript code
-WORKDIR /app/apps/ogma-api
-RUN yarn workspace @ogma/api build
-
 # Expose the port the app runs on
 EXPOSE 3000
 

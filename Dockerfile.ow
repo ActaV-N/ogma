@@ -1,0 +1,23 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install yarn
+RUN corepack enable && corepack prepare yarn@4.5.3 --activate
+
+# Copy workspace configuration first
+COPY package.json yarn.lock .yarnrc.yml tsconfig.json tsconfig.base.json ./
+COPY .yarn ./.yarn
+
+# Copy the web app package.json
+COPY apps/ogma-web/package.json ./apps/ogma-web/
+
+# Install dependencies
+RUN yarn install
+
+# Copy the web app source code
+COPY apps/ogma-web ./apps/ogma-web
+
+EXPOSE 3001
+
+CMD ["yarn", "workspace", "@ogma/web", "dev", "--host", "0.0.0.0"]

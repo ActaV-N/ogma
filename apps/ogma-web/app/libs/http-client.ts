@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 const httpClient = (() => {
     const axiosInstance = axios.create({
-        baseURL: 'http://localhost:3000',
+        baseURL: `${process.env.OGMA_API_URL}/api`,
         headers: {
             'Content-Type': 'application/json',
         },

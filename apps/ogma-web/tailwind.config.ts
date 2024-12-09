@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
         background: {
-          DEFAULT: '#f0f4f8',
+          DEFAULT: '#f7f7f7',
           gradient: {
             from: {
               DEFAULT: '#E0F4FF',

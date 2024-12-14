@@ -7,7 +7,11 @@ export class ConversationRepository extends Repository<Conversation> {
   protected entityClass = Conversation;
 
   async find() {
-    return this.entityManager.find(this.entityClass);
+    return this.entityManager.find(this.entityClass, {
+      order: {
+        createdAt: "DESC",
+      },
+    });
   }
 
   async findOneOrFail(id: string) {

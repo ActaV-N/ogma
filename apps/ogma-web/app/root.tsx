@@ -10,7 +10,12 @@ export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
 export const loader = async () => {
   const conversations = await conversationRepository.list();
-  return Response.json({ conversations });
+  return Response.json({
+    conversations: conversations.map((conversation) => ({
+      ...conversation,
+      createdAt: formatDate(conversation.createdAt),
+    })),
+  });
 };
 
 export default function App() {
@@ -24,17 +29,17 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-gradient-45 from-background-gradient-from via-background-gradient-via to-background-gradient-to bg-gradient-animate animate-gradient-shift-slow">
+      <body className="bg-slate-200">
         <div className="flex h-screen">
           <div className="w-4/12 min-w-[300px] max-w-[400px] p-4">
-            <nav className="bg-background h-full rounded-md shadow-md flex flex-col">
+            <nav className="bg-background h-full rounded-md shadow-md flex flex-col overflow-y-auto">
               <Suspense fallback={<div>Loading...</div>}>
                 <Await resolve={conversations}>
                   {conversations.length ? (
                     conversations.map((conversation) => (
                       <Link
                         key={conversation.id}
-                        to={`/conversations/${conversation.id}`}
+                        to={`/chats/${conversation.id}`}
                         className="transition-colors duration-200 ease-in-out p-3 border-b hover:bg-gray-200 flex flex-col gap-1"
                       >
                         <div className="text-stone-800 text-sm">{conversation.title}</div>
@@ -44,7 +49,7 @@ export default function App() {
                             alt="clock"
                             className="size-3 text-stone-500"
                           />
-                          {formatDate(conversation.createdAt.toString())}
+                          {conversation.createdAt}
                         </div>
                       </Link>
                     ))

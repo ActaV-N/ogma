@@ -13,6 +13,10 @@ export class ConversationService extends ApplicationService {
     super();
   }
 
+  async retrieve(id: string) {
+    return this.conversationRepository.findOneOrFail(id);
+  }
+
   async list() {
     return this.conversationRepository
       .find()
@@ -40,9 +44,8 @@ export class ConversationService extends ApplicationService {
     conversationId: string;
     message: string;
   }) {
-    const conversation = await this.conversationRepository.findOneOrFail(
-      conversationId
-    );
+    const conversation =
+      await this.conversationRepository.findOneOrFail(conversationId);
 
     conversation.userAsk(message);
     const response = await this.anthropicClient.chat([

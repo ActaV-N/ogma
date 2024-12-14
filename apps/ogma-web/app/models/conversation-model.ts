@@ -5,9 +5,9 @@ export class Message {
 
   content!: string;
 
-  createdAt!: Date;
+  createdAt!: DateString;
 
-  updatedAt!: Date;
+  updatedAt!: DateString;
 }
 
 export class Conversation {
@@ -15,9 +15,9 @@ export class Conversation {
 
   title!: string;
 
-  createdAt!: Date;
+  createdAt!: DateString;
 
-  updatedAt!: Date;
-  
+  updatedAt!: DateString;
+
   messages!: Message[];
 }

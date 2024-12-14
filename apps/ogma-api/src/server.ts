@@ -2,6 +2,7 @@ import "reflect-metadata";
 import fastify from "fastify";
 import { fastifyMultipart } from "@fastify/multipart";
 import fastifyWebsocket from "@fastify/websocket";
+import cors from "@fastify/cors";
 import { getConfig } from "~configs";
 import { appRoutes } from "~routes";
 import { routeEnroller } from "~plugins";
@@ -52,6 +53,10 @@ import { dataSourceToken } from "~libs/ddd/typeorm";
 
   // Plugins from fastify ecosystem
   await server.register(fastifyMultipart);
+  await server.register(cors, {
+    origin: "*",
+    methods: ["GET", "POST"],
+  });
   await server.register(fastifyWebsocket);
   // Custom plugins
   await server.register(routeEnroller);

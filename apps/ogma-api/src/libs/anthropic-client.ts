@@ -16,6 +16,7 @@ export class AnthropicClient {
   async chat(
     messages: { role: "user" | "assistant"; content: string }[]
   ): Promise<string> {
+    return "테스트 중입니다 😊";
     const response = await this.client.messages.create({
       model: "claude-3-5-haiku-20241022",
       max_tokens: 2000,

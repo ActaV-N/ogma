@@ -29,6 +29,7 @@ export class Conversation extends Aggregate {
   @OneToMany(() => Message, (message) => message.conversation, {
     eager: true,
     cascade: true,
+    onDelete: "CASCADE",
   })
   messages!: Message[];
 
@@ -71,13 +72,15 @@ export class Message {
   @Column()
   role!: Role;
 
-  @Column()
+  @Column({ type: "text" })
   content!: string;
 
   @CreateDateColumn()
   createdAt!: Date;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "conversationId" })
   conversation!: never;
 

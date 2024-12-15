@@ -4,15 +4,24 @@
   "type": "module",
   "dependencies": {
     "@auth/core": "^0.37.4",
+    "@radix-ui/react-avatar": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.1",
     "@remix-run/node": "^2.15.0",
     "@remix-run/react": "^2.15.0",
     "@remix-run/serve": "^2.15.0",
     "axios": "^1.7.9",
     "class-transformer": "^0.5.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "isbot": "4",
+    "lucide-react": "^0.468.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-type-animation": "^3.2.0",
+    "shadcn": "^2.1.7",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.15.0",
@@ -23,6 +32,7 @@
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.16",
     "vite": "^6.0.2",
+    "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "scripts": {

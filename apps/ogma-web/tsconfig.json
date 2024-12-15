@@ -1,13 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "svg.d.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~*": ["./app/*"]
+      "~*": ["./app/*"],
+      "~assets/*": ["./public/assets/*"]
     },
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["vite-plugin-svgr/client"]
   }
 }

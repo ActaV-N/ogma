@@ -48,7 +48,7 @@ export default function Chats() {
 
   return (
     <div className="h-screen py-4 pr-2 flex flex-col overflow-hidden">
-      <div className="h-full flex flex-col">
+      <div className="h-full flex flex-col gap-2">
         <div className="flex justify-center gap-2 pb-2">
           <span
             onClick={() => {

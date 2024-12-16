@@ -6,6 +6,7 @@ export function useAnimatedLoading(
     minimumLoadingDuration?: number;
     stateDuration?: number;
     success?: boolean;
+    onLoadingStart?: () => void;
     onComplete?: () => void;
     onSuccess?: () => void;
     onError?: () => void;
@@ -16,6 +17,7 @@ export function useAnimatedLoading(
     minimumLoadingDuration = 300,
     stateDuration = 1000,
     success: isSuccess,
+    onLoadingStart,
     onComplete,
     onSuccess,
     onError,
@@ -35,6 +37,7 @@ export function useAnimatedLoading(
       setIsSuccessVisible(false);
       setIsErrorVisible(false);
       setIsCompleted(false);
+      onLoadingStart?.();
     } else if (!isSubmitting && prevIsSubmitting.current && isSuccess !== undefined) {
       const elapsedTime = loadStartTimestamp.current ? Date.now() - loadStartTimestamp.current : 0;
       const remainingLoadTime = Math.max(minimumLoadingDuration - elapsedTime, 0);
@@ -44,32 +47,25 @@ export function useAnimatedLoading(
         if (isSuccess) {
           setIsSuccessVisible(true);
           setIsErrorVisible(false);
+          onSuccess?.();
         } else {
           setIsSuccessVisible(false);
           setIsErrorVisible(true);
+          onError?.();
         }
-
-        setTimeout(() => {
-          if (isSuccess) {
-            onSuccess?.();
-          } else {
-            onError?.();
-          }
-          setIsCompleted(true);
-          onComplete?.();
-        }, stateDuration);
       }, remainingLoadTime);
     }
     prevIsSubmitting.current = isSubmitting;
-  }, [
-    isSubmitting,
-    isSuccess,
-    minimumLoadingDuration,
-    stateDuration,
-    onComplete,
-    onSuccess,
-    onError,
-  ]);
+  }, [isSubmitting, isSuccess, minimumLoadingDuration, stateDuration, onSuccess, onError]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setTimeout(() => {
+        setIsCompleted(true);
+        onComplete?.();
+      }, stateDuration);
+    }
+  }, [isSuccess, stateDuration, onComplete]);
 
   return {
     loading: isLoading,

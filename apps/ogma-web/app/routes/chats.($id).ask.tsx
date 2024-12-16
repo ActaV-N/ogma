@@ -9,6 +9,7 @@ import { conversationRepository } from '~repositories';
 import { useSocket } from '~hooks/use-socket';
 import { formatDate } from '~libs/date';
 import { useChatLoaded } from '~hooks/use-chat-loaded';
+import { MarkdownWithCitations } from '~components';
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const conversation = await conversationRepository.retrieveWithSearchHistories(params.id!);
@@ -77,7 +78,12 @@ export default function AskPage() {
             <div>
               <h2 className="text-xl pb-2">Answer</h2>
               {searchHistory.answer?.choices.map((choice) => (
-                <p key={`${searchHistory.id}-${choice.index}`}>{choice.message.content}</p>
+                <div key={`${searchHistory.id}-${choice.index}`}>
+                  <MarkdownWithCitations
+                    content={choice.message.content}
+                    citations={searchHistory.answer?.citations}
+                  />
+                </div>
               )) || (
                 <div className="flex">
                   <l-quantum size="32" speed="2" color="rgb(71 85 105)"></l-quantum>

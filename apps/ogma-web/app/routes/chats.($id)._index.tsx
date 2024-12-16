@@ -62,6 +62,7 @@ export default function Chat() {
     }
   };
 
+  // TODO: refactor key, TypeAnimation 처리 로직 리팩토링
   return (
     <div
       className={cn(

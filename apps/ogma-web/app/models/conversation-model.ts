@@ -5,7 +5,7 @@ export class SearchHistory {
 
   answer!: {
     id: string;
-    citations: any[];
+    citations: string[];
     choices: {
       index: number;
       message: {

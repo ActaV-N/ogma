@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData, useOutletContext } from '@remix-run/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import { Conversation, Message } from '~models';
 import { conversationRepository } from '~repositories';
@@ -9,9 +9,10 @@ import { cn } from '~libs/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '~components/ui/avatar';
 import Send from '~assets/svg/send.svg?react';
 import { Input } from '~components/ui/input';
+import { useSocket } from '~hooks/use-socket';
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const conversation = await conversationRepository.retrieve(params.id!);
+  const conversation = await conversationRepository.retrieveWithDiscussions(params.id!);
   return Response.json({ conversation });
 };
 
@@ -23,7 +24,12 @@ export default function Chat() {
   }>();
 
   // states, refs
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const socket = useSocket(`/chat/${conversation.id}`, {
+    onMessage: (data: Partial<Message>) => {
+      // TODO: id undefined로 처리하는 게 맞아?
+      setMessages((prevMessages) => [...prevMessages.slice(0, -1), { ...data, id: undefined }]);
+    },
+  });
   const [messages, setMessages] = useState<Partial<Message>[]>(conversation.messages);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
@@ -41,33 +47,6 @@ export default function Chat() {
   }, [conversation]);
 
   useEffect(() => {
-    if (socket) {
-      socket.close();
-    }
-
-    const ws = new WebSocket(`ws://localhost:3000/api/chat/${conversation.id}`);
-    ws.onopen = () => {
-      console.log('Connected to websocket server');
-    };
-
-    ws.onmessage = (event) => {
-      console.log('Received message from server:', event.data);
-      const data = JSON.parse(event.data).data;
-      setMessages((prevMessages) => [...prevMessages, { ...data, id: undefined }]);
-    };
-
-    ws.onclose = () => {
-      console.log('Disconnected from websocket server');
-    };
-
-    setSocket(ws);
-
-    return () => {
-      ws.close();
-    };
-  }, [conversation.id]);
-
-  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, messagesEndRef]);
 
@@ -77,6 +56,7 @@ export default function Chat() {
       setMessages((prevMessages) => [
         ...prevMessages,
         { role: 'user', content: value, createdAt: formatDate(new Date()) },
+        { id: 'temp', role: 'assistant', content: undefined, createdAt: formatDate(new Date()) },
       ]);
       socket.send(value);
     }
@@ -103,14 +83,14 @@ export default function Chat() {
                 <AvatarFallback>Y</AvatarFallback>
               </Avatar>
               <div
-                className={`p-2 rounded-md shadow-md bg-${message.role === 'user' ? 'white' : 'slate-400'} ${message.role === 'user' ? 'self-end' : 'self-start'} max-w-md`}
+                className={`py-2 px-3 rounded-md shadow-md bg-${message.role === 'user' ? 'white' : 'slate-400'} ${message.role === 'user' ? 'self-end' : 'self-start'} max-w-md`}
               >
                 {message.content?.split('<br>').map((text, index, array) => (
                   <span key={index}>
                     {text}
                     {index < array.length - 1 && <br />}
                   </span>
-                ))}
+                )) || <l-bouncy size="24" speed="1.25" color="rgb(71 85 105)"></l-bouncy>}
               </div>
             </div>
           ) : (
@@ -133,7 +113,7 @@ export default function Chat() {
         )}
         <div ref={messagesEndRef}></div>
       </div>
-      <Input onSubmit={handleSubmit}>
+      <Input placeholder="메세지를 입력하세요" onSubmit={handleSubmit}>
         <Send />
       </Input>
     </div>

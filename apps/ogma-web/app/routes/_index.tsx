@@ -1,5 +1,6 @@
 import { ActionFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useActionData, useNavigate } from '@remix-run/react';
+import { useState } from 'react';
 import { Button } from '~components/ui/button';
 import { useAnimatedLoading } from '~hooks';
 import { cn } from '~libs/utils';
@@ -25,12 +26,22 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 export default function Index() {
   const actionData = useActionData<typeof action>();
 
+  const [helperText, setHelperText] = useState('');
   const navigate = useNavigate();
-  const { loading, success, error } = useAnimatedLoading({
+  const { loading, success, error, completed } = useAnimatedLoading({
     minimumLoadingDuration: 500,
     stateDuration: 1000,
     success: actionData?.success,
+    onLoadingStart: () => {
+      setHelperText('여러분의 토론 메이트를 생성중입니다. 잠시만 기다려주세요 😎');
+    },
+    onError: () => {
+      setHelperText(actionData?.errors || '');
+    },
     onSuccess: () => {
+      setHelperText('잠시 후, 새로운 토론을 시작합니다. 🎊');
+    },
+    onComplete: () => {
       if (actionData?.success && actionData.id) {
         navigate(`/chats/${actionData.id}`);
       }
@@ -44,7 +55,7 @@ export default function Index() {
           <Form
             method="post"
             className={`relative transition-opacity duration-200 ease-in-out flex flex-col justify-center items-center gap-2 w-full ${
-              success ? 'opacity-0' : 'opacity-100'
+              completed ? 'opacity-0' : 'opacity-100'
             }`}
           >
             <input
@@ -58,11 +69,12 @@ export default function Index() {
             </Button>
             <div
               className={cn(
-                'transition-opacity duration-200 ease-in-out text-red-500 absolute -bottom-[2rem]',
-                error ? 'opacity-100' : 'opacity-0'
+                'transition-opacity duration-200 ease-in-out absolute -bottom-[2rem]',
+                error || loading || success ? 'opacity-100' : 'opacity-0',
+                error ? 'text-red-500' : 'text-gray-500'
               )}
             >
-              {actionData?.errors}
+              {helperText}
             </div>
           </Form>
         </div>

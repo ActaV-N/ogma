@@ -76,7 +76,7 @@ export default function AskPage() {
                 <div key={`${searchHistory.id}-${choice.index}`}>
                   <MarkdownWithCitations
                     content={choice.message.content}
-                    citations={searchHistory.answer?.citations}
+                    citations={searchHistory.answer?.citationsMeta}
                   />
                 </div>
               )) || (

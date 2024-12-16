@@ -1,3 +1,5 @@
+import { fetchOgTitle } from '~libs';
+
 export class SearchHistory {
   id!: string;
 
@@ -6,6 +8,10 @@ export class SearchHistory {
   answer!: {
     id: string;
     citations: string[];
+    citationsMeta: {
+      url: string;
+      title: string;
+    }[];
     choices: {
       index: number;
       message: {

@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { httpClient } from '~/libs';
+import { fetchOgTitle, httpClient } from '~/libs';
 import { Conversation } from '~models';
 
 export const conversationRepository = {
@@ -12,7 +12,26 @@ export const conversationRepository = {
   retrieveWithSearchHistories: async (id: string) => {
     return httpClient
       .get<Conversation>(`/conversations/${id}/search-histories`)
-      .then((res) => plainToInstance(Conversation, res));
+      .then((res) => plainToInstance(Conversation, res))
+      .then(async (conversation) => {
+        return {
+          ...conversation,
+          searchHistories: await Promise.all(
+            conversation.searchHistories.map(async (searchHistory) => ({
+              ...searchHistory,
+              answer: {
+                ...searchHistory.answer,
+                citationsMeta: await Promise.all(
+                  searchHistory.answer.citations.map(async (citation) => ({
+                    url: citation,
+                    title: await fetchOgTitle(citation),
+                  }))
+                ),
+              },
+            }))
+          ),
+        };
+      });
   },
 
   list: async () => {

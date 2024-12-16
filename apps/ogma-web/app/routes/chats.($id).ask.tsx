@@ -20,7 +20,6 @@ export default function AskPage() {
   const { conversation }: { conversation: Conversation } = useLoaderData<typeof loader>();
 
   // states, refs
-  const [loaded, setLoaded] = useState(false);
   const [searchHistories, setSearchHistories] = useState<Partial<SearchHistory>[]>(
     conversation.searchHistories
   );
@@ -38,10 +37,6 @@ export default function AskPage() {
   // calculated values
 
   // effects
-  useEffect(() => {
-    setLoaded(true);
-  }, []);
-
   useEffect(() => {
     searchHistoriesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [searchHistories, searchHistoriesEndRef]);

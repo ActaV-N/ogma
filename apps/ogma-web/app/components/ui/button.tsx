@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '~libs/utils';
-import Loading from '~assets/svg/loading.svg?react';
 import Success from '~assets/svg/success.svg?react';
 
 const buttonVariants = cva(
@@ -70,9 +69,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {children}
         </div>
         {!showText && (
-          <Loading
-            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200 ease-in-out size-3 ${loading ? 'opacity-100' : 'opacity-0'}`}
-          />
+          <div
+            className={`absolute w-[24px] h-[24px] left-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200 ease-in-out size-3 ${loading ? 'opacity-100' : 'opacity-0'}`}
+          >
+            <l-helix size="24" speed="1.75" color="rgb(71 85 105)"></l-helix>
+          </div>
         )}
         {!showText && (
           <Success

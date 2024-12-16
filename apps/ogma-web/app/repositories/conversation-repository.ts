@@ -3,9 +3,15 @@ import { httpClient } from '~/libs';
 import { Conversation } from '~models';
 
 export const conversationRepository = {
-  retrieve: async (id: string) => {
+  retrieveWithDiscussions: async (id: string) => {
     return httpClient
-      .get<Conversation>(`/conversations/${id}`)
+      .get<Conversation>(`/conversations/${id}/discussions`)
+      .then((res) => plainToInstance(Conversation, res));
+  },
+
+  retrieveWithSearchHistories: async (id: string) => {
+    return httpClient
+      .get<Conversation>(`/conversations/${id}/search-histories`)
       .then((res) => plainToInstance(Conversation, res));
   },
 

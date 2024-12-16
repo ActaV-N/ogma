@@ -1,3 +1,25 @@
+export class SearchHistory {
+  id!: string;
+
+  question!: string;
+
+  answer!: {
+    id: string;
+    citations: any[];
+    choices: {
+      index: number;
+      message: {
+        content: string;
+        role: 'user' | 'assistant';
+      };
+    }[];
+  };
+
+  createdAt!: DateString;
+
+  updatedAt!: DateString;
+}
+
 export class Message {
   id!: string;
 
@@ -20,4 +42,6 @@ export class Conversation {
   updatedAt!: DateString;
 
   messages!: Message[];
+
+  searchHistories!: SearchHistory[];
 }

@@ -5,10 +5,11 @@ export interface InputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   onSubmit?: (value: string) => void;
   disabled?: boolean;
   children?: React.ReactNode;
+  placeholder?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, onSubmit, disabled: _disabled, children, ...props }, ref) => {
+  ({ className, onSubmit, disabled: _disabled, children, placeholder, ...props }, ref) => {
     const [value, setValue] = React.useState('');
     const formRef = React.useRef<HTMLFormElement>(null);
     const disabled = _disabled || !value.replace(/<br>/g, '').trim();
@@ -29,7 +30,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div
           contentEditable
           ref={ref}
-          className="w-full outline-none self-center"
+          data-placeholder={placeholder}
+          className="w-full outline-none self-center empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
           onInput={(e) => setValue(e.currentTarget.innerHTML || '')}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {

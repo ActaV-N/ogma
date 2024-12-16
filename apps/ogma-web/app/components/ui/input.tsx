@@ -16,10 +16,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      if (!!value.replace(/<br>|<div>|<\/div>/g, '').trim()) {
+      if (!!value.trim()) {
         onSubmit?.(value);
       }
       e.currentTarget.textContent = '';
+    };
+
+    const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+      const content = e.currentTarget.innerHTML || '';
+      setValue(content);
+
+      // Clear the div if it only contains empty elements
+      if (!content.replace(/<[^>]*>/g, '').trim()) {
+        e.currentTarget.innerHTML = '';
+      }
     };
 
     return (
@@ -32,7 +42,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           data-placeholder={placeholder}
           className="w-full outline-none self-center empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
-          onInput={(e) => setValue(e.currentTarget.innerHTML || '')}
+          onInput={handleInput}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
               handleSubmit(e);

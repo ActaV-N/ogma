@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from '@remix-run/node';
-import { useLoaderData, useOutletContext } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import { Conversation, Message } from '~models';
@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '~components/ui/avatar';
 import Send from '~assets/svg/send.svg?react';
 import { Input } from '~components/ui/input';
 import { useSocket } from '~hooks/use-socket';
+import { useChatLoaded } from '~hooks/use-chat-loaded';
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const conversation = await conversationRepository.retrieveWithDiscussions(params.id!);
@@ -18,24 +19,23 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export default function Chat() {
   const { conversation }: { conversation: Conversation } = useLoaderData<typeof loader>();
-  const { shouldNavigate, handleNavigate } = useOutletContext<{
-    shouldNavigate: boolean;
-    handleNavigate: () => void;
-  }>();
 
   // states, refs
+  const [messages, setMessages] = useState<Partial<Message>[]>(conversation.messages);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // lib hooks
   const socket = useSocket(`/chat/${conversation.id}`, {
     onMessage: (data: Partial<Message>) => {
       // TODO: id undefined로 처리하는 게 맞아?
       setMessages((prevMessages) => [...prevMessages.slice(0, -1), { ...data, id: undefined }]);
     },
   });
-  const [messages, setMessages] = useState<Partial<Message>[]>(conversation.messages);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [loaded, setLoaded] = useState(false);
+
+  const { show, handleNavigate } = useChatLoaded();
 
   // calculated values
-  const shouldShow = !shouldNavigate && loaded;
 
   // effects
   useEffect(() => {
@@ -66,8 +66,8 @@ export default function Chat() {
     <div
       className={cn(
         `overflow-y-auto flex flex-col justify-between h-full transition-[opacity,transform] duration-300 ease-in-out`,
-        shouldShow ? 'opacity-100' : 'opacity-0',
-        shouldShow ? 'translate-x-0' : '-translate-x-[100px]'
+        show ? 'opacity-100' : 'opacity-0',
+        show ? 'translate-x-0' : '-translate-x-[100px]'
       )}
       onTransitionEnd={handleNavigate}
     >

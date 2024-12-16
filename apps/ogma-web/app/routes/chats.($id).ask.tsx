@@ -1,4 +1,4 @@
-import { useLoaderData, useOutletContext } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { Input } from '~components/ui/input';
@@ -8,6 +8,7 @@ import { Conversation, SearchHistory } from '~models';
 import { conversationRepository } from '~repositories';
 import { useSocket } from '~hooks/use-socket';
 import { formatDate } from '~libs/date';
+import { useChatLoaded } from '~hooks/use-chat-loaded';
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const conversation = await conversationRepository.retrieveWithSearchHistories(params.id!);
@@ -16,25 +17,24 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export default function AskPage() {
   const { conversation }: { conversation: Conversation } = useLoaderData<typeof loader>();
-  const { shouldNavigate, handleNavigate } = useOutletContext<{
-    shouldNavigate: boolean;
-    handleNavigate: () => void;
-  }>();
 
   // states, refs
   const [loaded, setLoaded] = useState(false);
-  const socket = useSocket(`/search/${conversation.id}`, {
-    onMessage: (data: Partial<SearchHistory>) => {
-      setSearchHistories((prevMessages) => [...prevMessages.slice(0, -1), data]);
-    },
-  });
   const [searchHistories, setSearchHistories] = useState<Partial<SearchHistory>[]>(
     conversation.searchHistories
   );
   const searchHistoriesEndRef = useRef<HTMLDivElement>(null);
 
+  // lib hooks
+  const { show, handleNavigate } = useChatLoaded();
+
+  const socket = useSocket(`/search/${conversation.id}`, {
+    onMessage: (data: Partial<SearchHistory>) => {
+      setSearchHistories((prevMessages) => [...prevMessages.slice(0, -1), data]);
+    },
+  });
+
   // calculated values
-  const shouldShow = !shouldNavigate && loaded;
 
   // effects
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function AskPage() {
     <div
       className={cn(
         'transition-[opacity,transform] duration-300 ease-in-out flex flex-col justify-start h-full gap-2 overflow-y-auto w-full',
-        shouldShow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100px]'
+        show ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100px]'
       )}
       onTransitionEnd={handleNavigate}
     >

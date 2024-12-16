@@ -84,6 +84,37 @@ export default function AskPage() {
                   <l-quantum size="32" speed="2" color="rgb(71 85 105)"></l-quantum>
                 </div>
               )}
+              <h2 className="text-xl pb-2 mt-4">Sources</h2>
+              <div className="flex flex-col gap-4">
+                {searchHistory.answer?.citationsMeta.map((citation) => (
+                  <a
+                    key={citation.url}
+                    href={citation.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-stretch gap-4 rounded-md border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors no-underline overflow-hidden"
+                  >
+                    <div className="flex-1 min-w-0 p-4">
+                      <h3 className="text-sm font-medium text-gray-900 truncate">
+                        {citation.title}
+                      </h3>
+                      <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                        {citation.description}
+                      </p>
+                      <p className="text-xs text-gray-400 line-clamp-1 mt-1">{citation.url}</p>
+                    </div>
+                    {citation.image && (
+                      <div className="w-[120px] flex-shrink-0">
+                        <img
+                          src={citation.image}
+                          alt="citation image"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         ))}

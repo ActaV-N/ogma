@@ -8,7 +8,7 @@ const MarkdownWithCitations = ({
   content: string;
   citations?: Array<{
     url: string;
-    title: string;
+    title: string | null;
   }>;
 }) => {
   const processedContent = content.replace(/\[(\d+)\]/g, (_, num) => {

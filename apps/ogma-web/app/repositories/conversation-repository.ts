@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { fetchOgTitle, httpClient } from '~/libs';
+import { fetchPagePreview, httpClient } from '~/libs';
 import { Conversation } from '~models';
 
 export const conversationRepository = {
@@ -24,7 +24,7 @@ export const conversationRepository = {
                 citationsMeta: await Promise.all(
                   searchHistory.answer.citations.map(async (citation) => ({
                     url: citation,
-                    title: await fetchOgTitle(citation),
+                    ...(await fetchPagePreview(citation)),
                   }))
                 ),
               },

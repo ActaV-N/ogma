@@ -1,5 +1,3 @@
-import { fetchOgTitle } from '~libs';
-
 export class SearchHistory {
   id!: string;
 
@@ -10,7 +8,10 @@ export class SearchHistory {
     citations: string[];
     citationsMeta: {
       url: string;
-      title: string;
+      title: string | null;
+      description: string | null;
+      image: string | null;
+      favicon: string | null;
     }[];
     choices: {
       index: number;

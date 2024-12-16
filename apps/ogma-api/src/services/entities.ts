@@ -1,3 +1,7 @@
-import { Conversation, Message } from "./conversations/domain/model";
+import {
+  Conversation,
+  Message,
+  SearchHistory,
+} from "./conversations/domain/model";
 
-export default [Conversation, Message];
+export default [Conversation, Message, SearchHistory];

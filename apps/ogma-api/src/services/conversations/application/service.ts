@@ -3,18 +3,28 @@ import { Service as ApplicationService } from "~libs/ddd";
 import { ConversationRepository } from "../infrastructure/repository";
 import { Conversation } from "../domain/model";
 import { AnthropicClient } from "~libs/anthropic-client";
+import { PerplexityClient } from "~libs/perplexity-client";
 
 @Service()
 export class ConversationService extends ApplicationService {
   constructor(
     @Inject() private readonly conversationRepository: ConversationRepository,
-    @Inject() private readonly anthropicClient: AnthropicClient
+    @Inject() private readonly anthropicClient: AnthropicClient,
+    @Inject() private readonly perplexityClient: PerplexityClient
   ) {
     super();
   }
 
-  async retrieve(id: string) {
-    return this.conversationRepository.findOneOrFail(id);
+  async retrieveWithDiscussions(id: string) {
+    return this.conversationRepository
+      .findOneOrFail(id)
+      .then((conversation) => conversation.toRetrieveWithDiscussions());
+  }
+
+  async retrieveWithSearchHistories(id: string) {
+    return this.conversationRepository
+      .findOneOrFail(id)
+      .then((conversation) => conversation.toRetrieveWithSearchHistories());
   }
 
   async list() {
@@ -32,7 +42,7 @@ export class ConversationService extends ApplicationService {
       { role: "user", content: conversation.title },
     ]);
 
-    conversation.assistantAnswer(response);
+    conversation.assistantDiscuss(response);
     await this.conversationRepository.save([conversation]);
     return conversation;
   }
@@ -47,13 +57,32 @@ export class ConversationService extends ApplicationService {
     const conversation =
       await this.conversationRepository.findOneOrFail(conversationId);
 
-    conversation.userAsk(message);
+    conversation.userDiscuss(message);
     const response = await this.anthropicClient.chat([
       { role: "user", content: conversation.title },
       ...conversation.messages.map((message) => message.toAnthropicMessage()),
     ]);
-    conversation.assistantAnswer(response);
+    conversation.assistantDiscuss(response);
 
+    await this.conversationRepository.save([conversation]);
+    return conversation;
+  }
+
+  async search({
+    conversationId,
+    question,
+  }: {
+    conversationId: string;
+    question: string;
+  }) {
+    const conversation =
+      await this.conversationRepository.findOneOrFail(conversationId);
+
+    const answer = await this.perplexityClient.chat([
+      { role: "user", content: question },
+    ]);
+
+    conversation.addSearchHistory(question, answer);
     await this.conversationRepository.save([conversation]);
     return conversation;
   }

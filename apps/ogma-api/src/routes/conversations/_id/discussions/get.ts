@@ -26,7 +26,7 @@ export default {
     // 2. define parameter
     const { id } = request.params as { id: string };
     // 3. call service method
-    const conversation = await conversationService.retrieve(id);
+    const conversation = await conversationService.retrieveWithDiscussions(id);
 
     // 4. response
     return reply.status(200).send(conversation);

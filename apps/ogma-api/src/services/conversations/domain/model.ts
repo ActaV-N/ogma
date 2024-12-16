@@ -33,6 +33,17 @@ export class Conversation extends Aggregate {
   })
   messages!: Message[];
 
+  @OneToMany(
+    () => SearchHistory,
+    (searchHistory) => searchHistory.conversation,
+    {
+      eager: true,
+      cascade: true,
+      onDelete: "CASCADE",
+    }
+  )
+  searchHistories!: SearchHistory[];
+
   constructor(args?: { title: string; modelType: ModelType }) {
     super();
     if (args) {
@@ -40,6 +51,7 @@ export class Conversation extends Aggregate {
       this.title = args.title;
       this.modelType = args.modelType;
       this.messages = [];
+      this.searchHistories = [];
     }
   }
 
@@ -52,12 +64,30 @@ export class Conversation extends Aggregate {
     };
   }
 
-  userAsk(message: string) {
+  toRetrieveWithDiscussions() {
+    return {
+      ...this.toListItem(),
+      messages: this.messages,
+    };
+  }
+
+  toRetrieveWithSearchHistories() {
+    return {
+      ...this.toListItem(),
+      searchHistories: this.searchHistories,
+    };
+  }
+
+  userDiscuss(message: string) {
     this.messages.push(new Message({ role: "user", content: message }));
   }
 
-  assistantAnswer(message: string) {
+  assistantDiscuss(message: string) {
     this.messages.push(new Message({ role: "assistant", content: message }));
+  }
+
+  addSearchHistory(question: string, answer: object) {
+    this.searchHistories.push(new SearchHistory({ question, answer }));
   }
 }
 
@@ -96,5 +126,36 @@ export class Message {
       role: this.role,
       content: this.content,
     };
+  }
+}
+
+@Entity()
+export class SearchHistory {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  question!: string;
+
+  @Column({
+    type: "simple-json",
+    transformer: {
+      from: (value) => JSON.parse(value),
+      to: (value) => JSON.stringify(value),
+    },
+  })
+  answer!: object;
+
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "conversationId" })
+  conversation!: never;
+
+  constructor(args?: { question: string; answer: object }) {
+    if (args) {
+      this.question = args.question;
+      this.answer = args.answer;
+    }
   }
 }

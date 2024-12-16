@@ -1,6 +1,8 @@
 import { type FastifyInstance } from "fastify";
-import get from "./get";
+import { discussionRoutes } from "./discussions";
+import { searchHistoriesRoutes } from "./search-histories";
 
 export const idRoutes = async (fastify: FastifyInstance) => {
-  fastify.enroll([get]);
+  fastify.register(discussionRoutes, { prefix: "/discussions" });
+  fastify.register(searchHistoriesRoutes, { prefix: "/search-histories" });
 };

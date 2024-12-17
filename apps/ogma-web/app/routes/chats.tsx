@@ -15,14 +15,14 @@ export default function ChatsLayout() {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.altKey) {
-        if (event.key === 'ArrowLeft') {
+        if (event.key === 'Home') {
           if (location.pathname.endsWith('/ask')) {
             setShouldNavigate(true);
             setNextRoute(`/chats/${params.id}`);
           } else {
             setShouldNavigate(false);
           }
-        } else if (event.key === 'ArrowRight') {
+        } else if (event.key === 'End') {
           if (params.id && !location.pathname.endsWith('/ask')) {
             setShouldNavigate(true);
             setNextRoute(`/chats/${params.id}/ask`);

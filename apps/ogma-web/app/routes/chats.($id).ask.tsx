@@ -95,7 +95,7 @@ export default function AskPage() {
                     className="flex items-stretch gap-4 rounded-md border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors no-underline overflow-hidden"
                   >
                     <div className="flex-1 min-w-0 p-4">
-                      <h3 className="text-sm font-medium text-gray-900 truncate">
+                      <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
                         {citation.title}
                       </h3>
                       <p className="text-xs text-gray-500 line-clamp-2 mt-1">

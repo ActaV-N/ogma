@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate, useParams } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { cn } from '~libs/utils';
 
-export default function Chats() {
+export default function ChatsLayout() {
   const navigate = useNavigate();
   const params = useParams();
 

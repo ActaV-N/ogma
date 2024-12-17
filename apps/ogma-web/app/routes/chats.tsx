@@ -1,5 +1,6 @@
 import { Outlet, useLocation, useNavigate, useParams } from '@remix-run/react';
 import { useEffect, useState } from 'react';
+import { useAnimatedNavigation } from '~hooks';
 import { cn } from '~libs/utils';
 
 export default function ChatsLayout() {
@@ -8,6 +9,12 @@ export default function ChatsLayout() {
   const [shouldNavigate, setShouldNavigate] = useState(false);
 
   // lib hooks
+  const { animatedNavigate, helperText } = useAnimatedNavigation({
+    loadingDuration: 1000,
+    stateDuration: 500,
+    loadingStartText: '불러오는 중입니다...🤖',
+    successText: '잠시 후 이동합니다!',
+  });
   const params = useParams();
   const navigate = useNavigate();
   const currentLocation = useLocation();
@@ -46,7 +53,7 @@ export default function ChatsLayout() {
 
   const handleNavigate = () => {
     if (shouldNavigate && nextRoute) {
-      navigate(nextRoute);
+      animatedNavigate(nextRoute);
     }
   };
 
@@ -79,7 +86,14 @@ export default function ChatsLayout() {
             )}
           ></span>
         </div>
-        <Outlet context={{ shouldNavigate, handleNavigate }} />
+        {helperText ? (
+          <div className="opacity-0 animate-fade-in flex flex-col gap-2 justify-center items-center h-full">
+            <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
+            <p className="text-sm text-gray-500">{helperText}</p>
+          </div>
+        ) : (
+          <Outlet context={{ shouldNavigate, handleNavigate }} />
+        )}
       </div>
     </div>
   );

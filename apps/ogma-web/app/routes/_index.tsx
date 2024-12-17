@@ -26,21 +26,14 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 export default function Index() {
   const actionData = useActionData<typeof action>();
 
-  const [helperText, setHelperText] = useState('');
   const navigate = useNavigate();
-  const { loading, success, error, completed } = useAnimatedLoading('submitting', {
+  const { loading, success, error, completed, helperText } = useAnimatedLoading('submitting', {
     minimumLoadingDuration: 500,
     stateDuration: 1000,
     success: actionData?.success,
-    onLoadingStart: () => {
-      setHelperText('여러분의 토론 메이트를 생성중입니다. 잠시만 기다려주세요 😎');
-    },
-    onError: () => {
-      setHelperText(actionData?.errors || '');
-    },
-    onSuccess: () => {
-      setHelperText('잠시 후, 새로운 토론을 시작합니다. 🎊');
-    },
+    loadingStartText: '여러분의 토론 메이트를 생성중입니다. 잠시만 기다려주세요 😎',
+    successText: '잠시 후, 새로운 토론을 시작합니다. 🎊',
+    errorText: actionData?.errors || '',
     onComplete: () => {
       if (actionData?.success && actionData.id) {
         navigate(`/chats/${actionData.id}`);

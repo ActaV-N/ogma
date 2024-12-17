@@ -13,7 +13,7 @@ const MarkdownWithCitations = ({
 }) => {
   const processedContent = content.replace(/\[(\d+)\]/g, (_, num) => {
     const citation = citations?.[parseInt(num) - 1];
-    return citation ? `[\[${num}\]](${citation.url} "${citation.title}")` : `[${num}]`;
+    return citation ? `[${num}](${citation.url} "${citation.title}")` : `[${num}]`;
   });
 
   return (
@@ -22,14 +22,16 @@ const MarkdownWithCitations = ({
         components={{
           a: ({ node, ...props }) => (
             <Tooltip>
-              <a
-                {...props}
-                className="text-blue-500 hover:text-blue-700"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <TooltipTrigger>{props.children}</TooltipTrigger>
-              </a>
+              <TooltipTrigger>
+                <a
+                  {...props}
+                  className="transition-colors duration-200 ease-in-out text-white w-[13px] h-[13px] align-top rounded-full bg-slate-600 hover:bg-slate-500 inline-flex items-center justify-center text-[9px] ml-0.5"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {props.children}
+                </a>
+              </TooltipTrigger>
               <TooltipContent>{props.title}</TooltipContent>
             </Tooltip>
           ),

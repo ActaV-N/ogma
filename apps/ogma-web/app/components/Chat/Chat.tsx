@@ -20,7 +20,7 @@ function Chat(props: { message: Partial<Message>; animate?: boolean }) {
         />
       ) : (
         <div
-          className={`py-2 px-3 rounded-md shadow-md bg-${message.role === 'user' ? 'white' : 'slate-400'} ${message.role === 'user' ? 'self-end' : 'self-start'} max-w-md`}
+          className={`py-2 px-3 rounded-md shadow-md bg-${message.role === 'user' ? 'white' : 'slate-400'} ${message.role === 'user' ? 'self-end' : 'self-start'} max-w-md break-keep`}
         >
           {message.content?.split('<br>').map((text, index, array) => (
             <span key={index}>

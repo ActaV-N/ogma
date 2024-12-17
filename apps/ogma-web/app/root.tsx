@@ -63,7 +63,9 @@ export default function App() {
                     </Link>
                   ))
                 ) : (
-                  <div className="flex justify-center items-center h-full">No data</div>
+                  <div className="flex justify-center items-center h-full text-stone-500">
+                    진행 중인 토론이 없어요🙂‍↔️
+                  </div>
                 )}
               </Await>
             </Suspense>

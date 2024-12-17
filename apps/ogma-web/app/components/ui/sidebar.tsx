@@ -14,7 +14,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       <Comp
         className={cn(
           className,
-          'transition-[width] duration-200 ease-in-out w-4/12 p-4 w-4/12 min-w-[300px] max-w-[400px]'
+          'transition-[width] duration-200 ease-in-out w-4/12 p-4 w-4/12 min-w-[300px] max-w-[400px] z-10'
         )}
         ref={ref}
         {...props}

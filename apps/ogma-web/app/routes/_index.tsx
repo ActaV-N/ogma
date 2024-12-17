@@ -28,7 +28,7 @@ export default function Index() {
 
   const [helperText, setHelperText] = useState('');
   const navigate = useNavigate();
-  const { loading, success, error, completed } = useAnimatedLoading({
+  const { loading, success, error, completed } = useAnimatedLoading('submitting', {
     minimumLoadingDuration: 500,
     stateDuration: 1000,
     success: actionData?.success,

@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { cn } from '~libs/utils';
 
 export default function ChatsLayout() {
-  const navigate = useNavigate();
-  const params = useParams();
-
+  // state, refs
   const [nextRoute, setNextRoute] = useState<string | null>(null);
   const [shouldNavigate, setShouldNavigate] = useState(false);
 
+  // lib hooks
+  const params = useParams();
+  const navigate = useNavigate();
   const currentLocation = useLocation();
 
   useEffect(() => {
@@ -39,10 +40,13 @@ export default function ChatsLayout() {
     };
   }, [navigate, params.id]);
 
+  useEffect(() => {
+    setShouldNavigate(false);
+  }, [currentLocation.pathname]);
+
   const handleNavigate = () => {
     if (shouldNavigate && nextRoute) {
       navigate(nextRoute);
-      setShouldNavigate(false);
     }
   };
 

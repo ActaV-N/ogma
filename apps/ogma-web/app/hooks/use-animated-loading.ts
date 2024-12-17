@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSubmitting } from './use-navigation';
+import { useNavigation } from './use-navigation';
 
 export function useAnimatedLoading(
+  type: 'submitting' | 'loading' = 'loading',
   options: {
     minimumLoadingDuration?: number;
     stateDuration?: number;
@@ -12,7 +13,10 @@ export function useAnimatedLoading(
     onError?: () => void;
   } = {}
 ) {
-  const { loading: isSubmitting } = useSubmitting();
+  const { loading, submitting } = useNavigation();
+
+  const isSubmitting = type === 'submitting' ? submitting : loading;
+
   const {
     minimumLoadingDuration = 300,
     stateDuration = 1000,

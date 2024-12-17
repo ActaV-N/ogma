@@ -10,6 +10,7 @@ import { Input } from '~components/ui/input';
 import { useSocket } from '~hooks/use-socket';
 import { useChatLoaded } from '~hooks/use-chat-loaded';
 import Chat from '~components/Chat';
+import { useNavigation } from '~hooks';
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const conversation = await conversationRepository.retrieveWithDiscussions(params.id!);
@@ -24,6 +25,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // lib hooks
+  const { loading } = useNavigation();
   const socket = useSocket(`/chat/${conversation.id}`, {
     onMessage: (data: Partial<Message>) => {
       setMessages((prevMessages) => [...prevMessages.slice(0, -1), { ...data, id: undefined }]);
@@ -54,6 +56,14 @@ export default function ChatPage() {
       socket.send(value);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="opacity-0 animate-fade-in flex justify-center items-center h-full">
+        <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
+      </div>
+    );
+  }
 
   return (
     <div

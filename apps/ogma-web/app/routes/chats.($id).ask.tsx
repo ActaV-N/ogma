@@ -86,7 +86,7 @@ export default function AskPage() {
               )}
               <h2 className="text-xl pb-2 mt-4">Sources</h2>
               <div className="flex flex-col gap-4">
-                {searchHistory.answer?.citationsMeta.map((citation) => (
+                {searchHistory.answer?.citationsMeta?.map((citation) => (
                   <a
                     key={citation.url}
                     href={citation.url}

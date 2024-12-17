@@ -44,7 +44,7 @@ export default function App() {
         <Links />
       </head>
       <body className="bg-slate-200">
-        <div className="flex h-screen z-1000">
+        <div className="flex h-screen">
           <Sidebar home={isHome}>
             <Suspense fallback={<div>Loading...</div>}>
               <Await resolve={conversations}>

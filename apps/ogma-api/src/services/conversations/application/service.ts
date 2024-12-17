@@ -82,7 +82,7 @@ export class ConversationService extends ApplicationService {
       { role: "user", content: question },
     ]);
 
-    conversation.addSearchHistory(question, answer);
+    await conversation.addSearchHistory(question, answer);
     await this.conversationRepository.save([conversation]);
     return conversation;
   }

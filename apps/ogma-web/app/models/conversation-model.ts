@@ -6,13 +6,6 @@ export class SearchHistory {
   answer!: {
     id: string;
     citations: string[];
-    citationsMeta: {
-      url: string;
-      title: string | null;
-      description: string | null;
-      image: string | null;
-      favicon: string | null;
-    }[];
     choices: {
       index: number;
       message: {
@@ -21,6 +14,14 @@ export class SearchHistory {
       };
     }[];
   };
+
+  citationMeta!: {
+    url: string;
+    title: string | null;
+    description: string | null;
+    image: string | null;
+    favicon: string | null;
+  }[];
 
   createdAt!: DateString;
 

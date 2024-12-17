@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { v4 as uuid } from "uuid";
 import { Aggregate } from "~libs";
+import { fetchPagePreview } from "~libs/og-utils";
 
 type ModelType = "fact_check" | "discussion";
 
@@ -86,8 +87,16 @@ export class Conversation extends Aggregate {
     this.messages.push(new Message({ role: "assistant", content: message }));
   }
 
-  addSearchHistory(question: string, answer: object) {
-    this.searchHistories.push(new SearchHistory({ question, answer }));
+  async addSearchHistory(question: string, answer: { citations: string[] }) {
+    const citationMeta = await Promise.all(
+      answer.citations.map(async (citation) => ({
+        url: citation,
+        ...(await fetchPagePreview(citation)),
+      }))
+    );
+    this.searchHistories.push(
+      new SearchHistory({ question, answer, citationMeta })
+    );
   }
 }
 
@@ -146,16 +155,30 @@ export class SearchHistory {
   })
   answer!: object;
 
+  @Column({
+    type: "simple-json",
+    transformer: {
+      from: (value) => JSON.parse(value),
+      to: (value) => JSON.stringify(value),
+    },
+  })
+  citationMeta!: object;
+
   @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "conversationId" })
   conversation!: never;
 
-  constructor(args?: { question: string; answer: object }) {
+  constructor(args?: {
+    question: string;
+    answer: object;
+    citationMeta: object;
+  }) {
     if (args) {
       this.question = args.question;
       this.answer = args.answer;
+      this.citationMeta = args.citationMeta;
     }
   }
 }

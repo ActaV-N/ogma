@@ -1,6 +1,6 @@
-import * as cheerio from 'cheerio';
+import * as cheerio from "cheerio";
 
-interface PagePreview {
+export interface PagePreview {
   title: string | null;
   description: string | null;
   image: string | null;
@@ -14,22 +14,25 @@ export async function fetchPagePreview(url: string): Promise<PagePreview> {
     const $ = cheerio.load(html);
 
     // Get title (og:title or fallback to HTML title)
-    const title = $('meta[property="og:title"]').attr('content') || $('title').text() || null;
+    const title =
+      $('meta[property="og:title"]').attr("content") ||
+      $("title").text() ||
+      null;
 
     // Get description (og:description or fallback to meta description)
     const description =
-      $('meta[property="og:description"]').attr('content') ||
-      $('meta[name="description"]').attr('content') ||
+      $('meta[property="og:description"]').attr("content") ||
+      $('meta[name="description"]').attr("content") ||
       null;
 
     // Get image (og:image)
-    const image = $('meta[property="og:image"]').attr('content') || null;
+    const image = $('meta[property="og:image"]').attr("content") || null;
 
     // Get favicon (try different possible favicon locations)
     const favicon =
-      $('link[rel="icon"]').attr('href') ||
-      $('link[rel="shortcut icon"]').attr('href') ||
-      new URL('/favicon.ico', url).href ||
+      $('link[rel="icon"]').attr("href") ||
+      $('link[rel="shortcut icon"]').attr("href") ||
+      new URL("/favicon.ico", url).href ||
       null;
 
     return {
@@ -39,7 +42,7 @@ export async function fetchPagePreview(url: string): Promise<PagePreview> {
       favicon,
     };
   } catch (error) {
-    console.error('Error fetching page preview:', error);
+    console.error("Error fetching page preview:", error);
     return {
       title: null,
       description: null,

@@ -76,7 +76,7 @@ export default function AskPage() {
                 <div key={`${searchHistory.id}-${choice.index}`}>
                   <MarkdownWithCitations
                     content={choice.message.content}
-                    citations={searchHistory.answer?.citationsMeta}
+                    citations={searchHistory.citationMeta}
                   />
                 </div>
               )) || (
@@ -86,7 +86,7 @@ export default function AskPage() {
               )}
               <h2 className="text-xl pb-2 mt-4">Sources</h2>
               <div className="flex flex-col gap-4">
-                {searchHistory.answer?.citationsMeta?.map((citation) => (
+                {searchHistory.citationMeta?.map((citation) => (
                   <a
                     key={citation.url}
                     href={citation.url}
@@ -101,7 +101,9 @@ export default function AskPage() {
                       <p className="text-xs text-gray-500 line-clamp-2 mt-1">
                         {citation.description}
                       </p>
-                      <p className="text-xs text-gray-400 line-clamp-1 mt-1">{citation.url}</p>
+                      <p className="text-xs text-gray-400 line-clamp-1 mt-1 break-all">
+                        {citation.url}
+                      </p>
                     </div>
                     {citation.image && (
                       <div className="w-[120px] flex-shrink-0">

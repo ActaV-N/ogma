@@ -26,9 +26,16 @@ export default function ChatPage() {
 
   // lib hooks
   const { loading } = useNavigation();
-  const socket = useSocket(`/chat/${conversation.id}`, {
-    onMessage: (data: Partial<Message>) => {
+  const { loading: socketLoading, sendMessage } = useSocket(`/chat/${conversation.id}`, {
+    onReceived: (data: Partial<Message>) => {
       setMessages((prevMessages) => [...prevMessages.slice(0, -1), { ...data, id: undefined }]);
+    },
+    onSent: (data: string) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { role: 'user', content: data, createdAt: formatDate(new Date()) },
+        { id: 'temp', role: 'assistant', content: undefined, createdAt: formatDate(new Date()) },
+      ]);
     },
   });
 
@@ -46,16 +53,6 @@ export default function ChatPage() {
   }, [messages, messagesEndRef]);
 
   // handlers
-  const handleSubmit = (value: string) => {
-    if (socket?.readyState === WebSocket.OPEN) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { role: 'user', content: value, createdAt: formatDate(new Date()) },
-        { id: 'temp', role: 'assistant', content: undefined, createdAt: formatDate(new Date()) },
-      ]);
-      socket.send(value);
-    }
-  };
 
   if (loading) {
     return (
@@ -85,7 +82,7 @@ export default function ChatPage() {
         ))}
         <div ref={messagesEndRef}></div>
       </div>
-      <Input placeholder="메세지를 입력하세요" onSubmit={handleSubmit}>
+      <Input placeholder="메세지를 입력하세요" onSubmit={sendMessage} disabled={socketLoading}>
         <Send />
       </Input>
     </div>

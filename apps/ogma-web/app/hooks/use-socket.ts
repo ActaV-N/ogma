@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 
-export function useSocket<T = any>(path: string, options: { onMessage?: (data: T) => void }) {
-  const { onMessage } = options;
+export function useSocket<T = any>(
+  path: string,
+  options: { onReceived?: (data: T) => void; onSent?: (data: string) => void }
+) {
+  const { onReceived, onSent } = options;
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (socket) {
@@ -18,7 +22,8 @@ export function useSocket<T = any>(path: string, options: { onMessage?: (data: T
       console.log('Received message from server:', event.data);
       const data = JSON.parse(event.data).data;
 
-      onMessage?.(data);
+      onReceived?.(data);
+      setLoading(false);
     };
 
     ws.onclose = () => {
@@ -32,5 +37,13 @@ export function useSocket<T = any>(path: string, options: { onMessage?: (data: T
     };
   }, [path]);
 
-  return socket;
+  const sendMessage = (message: string, cb?: () => void) => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      setLoading(true);
+      socket.send(message);
+      onSent?.(message);
+    }
+  };
+
+  return { socket, loading, sendMessage };
 }

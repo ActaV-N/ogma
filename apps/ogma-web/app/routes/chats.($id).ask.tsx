@@ -28,9 +28,16 @@ export default function AskPage() {
   // lib hooks
   const { show, handleNavigate } = useChatLoaded();
 
-  const socket = useSocket(`/search/${conversation.id}`, {
-    onMessage: (data: Partial<SearchHistory>) => {
+  const {
+    socket,
+    loading: socketLoading,
+    sendMessage,
+  } = useSocket(`/search/${conversation.id}`, {
+    onReceived: (data: Partial<SearchHistory>) => {
       setSearchHistories((prevMessages) => [...prevMessages.slice(0, -1), data]);
+    },
+    onSent: (data: string) => {
+      setSearchHistories((prevMessages) => [...prevMessages, { question: data, id: undefined }]);
     },
   });
 
@@ -42,12 +49,6 @@ export default function AskPage() {
   }, [searchHistories, searchHistoriesEndRef]);
 
   // handlers
-  const handleSearch = (value: string) => {
-    if (socket?.readyState === WebSocket.OPEN) {
-      setSearchHistories((prevMessages) => [...prevMessages, { question: value, id: undefined }]);
-      socket.send(value);
-    }
-  };
 
   return (
     <div
@@ -57,7 +58,7 @@ export default function AskPage() {
       )}
       onTransitionEnd={handleNavigate}
     >
-      <Input placeholder="무엇이든 물어보세요" onSubmit={handleSearch}>
+      <Input placeholder="무엇이든 물어보세요" onSubmit={sendMessage} disabled={socketLoading}>
         <Search />
       </Input>
       <div className="flex flex-col gap-5 h-full overflow-y-auto">

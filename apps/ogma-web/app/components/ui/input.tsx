@@ -16,6 +16,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
+      if (disabled) return;
       if (!!value.trim()) {
         onSubmit?.(value);
       }
